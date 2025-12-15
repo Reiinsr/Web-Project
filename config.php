@@ -3,10 +3,11 @@
 // Uses environment variables if available (for production), otherwise uses defaults (for local development)
 
 // Check if we're in production (environment variables set)
-$db_host = getenv('DB_HOST') ?: 'localhost';
-$db_user = getenv('DB_USER') ?: 'root';
-$db_pass = getenv('DB_PASS') ?: '';
-$db_name = getenv('DB_NAME') ?: 'event_management';
+// Railway uses $_ENV, but we check multiple methods for compatibility
+$db_host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'localhost';
+$db_user = $_ENV['DB_USER'] ?? getenv('DB_USER') ?: 'root';
+$db_pass = $_ENV['DB_PASS'] ?? getenv('DB_PASS') ?: '';
+$db_name = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?: 'event_management';
 
 define('DB_HOST', $db_host);
 define('DB_USER', $db_user);

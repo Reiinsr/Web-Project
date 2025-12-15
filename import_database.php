@@ -8,7 +8,7 @@
 header('Content-Type: text/html; charset=utf-8');
 
 // Security: Only allow in development or with a secret key
-$secret_key = getenv('IMPORT_SECRET_KEY') ?: 'change-this-secret-key';
+$secret_key = $_ENV['IMPORT_SECRET_KEY'] ?? getenv('IMPORT_SECRET_KEY') ?: 'change-this-secret-key';
 if (!isset($_GET['key']) || $_GET['key'] !== $secret_key) {
     die('Access denied. Add ?key=your-secret-key to the URL');
 }
@@ -27,13 +27,37 @@ try {
     $conn = getDBConnection();
     echo '<div class="success">✓ Connected to database successfully!</div>';
     
-    // Read database.sql file
+    // Read database.sql file - try multiple locations
     $sql_file = __DIR__ . '/database.sql';
     if (!file_exists($sql_file)) {
-        throw new Exception('database.sql file not found!');
+        // Try alternative paths
+        $sql_file = dirname(__DIR__) . '/database.sql';
+        if (!file_exists($sql_file)) {
+            // If file not found, use embedded SQL
+            $sql = "-- Create events table
+CREATE TABLE IF NOT EXISTS events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    description TEXT NOT NULL,
+    location VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert sample events
+INSERT INTO events (title, date, description, location) VALUES
+('Tech Conference 2023', '2025-11-15', 'Join us for the annual Tech Conference featuring industry leaders and cutting-edge technology demonstrations.', 'Convention Center'),
+('Music Festival', '2025-12-01', 'Experience live music from top artists in an unforgettable outdoor setting.', 'City Park'),
+('Startup Pitch Night', '2026-04-15', 'Watch startups pitch their ideas to top investors and industry experts.', 'Innovation Hub'),
+('Art & Design Expo', '2026-05-20', 'Explore the latest trends in art and design from renowned artists and designers.', 'Art Gallery');";
+            echo '<div class="info">⚠ database.sql file not found, using embedded SQL instead</div>';
+        } else {
+            $sql = file_get_contents($sql_file);
+        }
+    } else {
+        $sql = file_get_contents($sql_file);
     }
-    
-    $sql = file_get_contents($sql_file);
     
     // Remove CREATE DATABASE and USE statements (we're already connected)
     $sql = preg_replace('/CREATE DATABASE.*?;/i', '', $sql);
@@ -90,7 +114,14 @@ try {
     echo '<pre>DB_HOST: ' . DB_HOST . "\n";
     echo 'DB_USER: ' . DB_USER . "\n";
     echo 'DB_NAME: ' . DB_NAME . "\n";
-    echo 'DB_PASS: ' . (DB_PASS ? '***' : '(empty)') . '</pre></div>';
+    echo 'DB_PASS: ' . (DB_PASS ? '***' : '(empty)') . "\n\n";
+    echo 'Environment Variables Check:' . "\n";
+    echo '$_ENV[DB_HOST]: ' . ($_ENV['DB_HOST'] ?? 'NOT SET') . "\n";
+    echo 'getenv(DB_HOST): ' . (getenv('DB_HOST') ?: 'NOT SET') . "\n";
+    echo '$_ENV[DB_USER]: ' . ($_ENV['DB_USER'] ?? 'NOT SET') . "\n";
+    echo 'getenv(DB_USER): ' . (getenv('DB_USER') ?: 'NOT SET') . "\n";
+    echo '$_ENV[DB_NAME]: ' . ($_ENV['DB_NAME'] ?? 'NOT SET') . "\n";
+    echo 'getenv(DB_NAME): ' . (getenv('DB_NAME') ?: 'NOT SET') . '</pre></div>';
 }
 
 echo '<p><a href="index.html">← Back to Website</a></p>';

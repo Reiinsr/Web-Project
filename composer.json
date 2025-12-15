@@ -1,0 +1,13 @@
+{
+    "name": "event-management-system",
+    "description": "Event Management System web application",
+    "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "files": ["config.php"]
+    }
+}
+
+

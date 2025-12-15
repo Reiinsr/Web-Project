@@ -1,0 +1,15 @@
+{
+  "name": "event-management-system",
+  "version": "1.0.0",
+  "description": "This project is an Event Management System web application built using HTML, CSS, and JavaScript. It provides a user-friendly interface for managing events, showcasing services, and facilitating user inquiries.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "live-server --port=3000 --open=/index.html"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Tech Conference 2023",
+    "date": "2025-11-15",
+    "description": "Join us for the annual Tech Conference..."
+  },
+  {
+    "id": 2,
+    "title": "Music Festival",
+    "date": "2025-12-01",
+    "description": "Experience live music from top artists."
+  },
+  {
+    "id": 6,
+    "title": "Startup Pitch Night",
+    "date": "2026-04-15",
+    "description": "Watch startups pitch their ideas to top investors."
+  },
+  {
+    "id": 7,
+    "title": "Art & Design Expo",
+    "date": "2026-05-20",
+    "description": "Explore the latest trends in art and design."
+  }
+]

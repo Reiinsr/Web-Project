@@ -63,28 +63,64 @@ INSERT INTO events (title, date, description, location) VALUES
     $sql = preg_replace('/CREATE DATABASE.*?;/i', '', $sql);
     $sql = preg_replace('/USE.*?;/i', '', $sql);
     
-    // Split into individual queries
-    $queries = array_filter(array_map('trim', explode(';', $sql)));
+    // Remove single-line comments
+    $sql = preg_replace('/--.*$/m', '', $sql);
+    
+    // Split into individual queries by semicolon, but preserve multi-line queries
+    $queries = [];
+    $current_query = '';
+    $lines = explode("\n", $sql);
+    
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (empty($line)) continue;
+        
+        $current_query .= $line . "\n";
+        
+        // If line ends with semicolon, it's a complete query
+        if (substr(rtrim($line), -1) === ';') {
+            $query = trim($current_query);
+            $query = rtrim($query, ';'); // Remove trailing semicolon
+            if (!empty($query) && strlen($query) > 5) { // Minimum query length
+                $queries[] = $query;
+            }
+            $current_query = '';
+        }
+    }
+    
+    // Add any remaining query
+    if (!empty(trim($current_query))) {
+        $queries[] = trim($current_query);
+    }
+    
+    echo '<div class="info">Found ' . count($queries) . ' SQL queries to execute</div>';
     
     $success_count = 0;
     $error_count = 0;
     
-    foreach ($queries as $query) {
-        if (empty($query) || strpos($query, '--') === 0) {
-            continue; // Skip empty queries and comments
+    foreach ($queries as $index => $query) {
+        $query = trim($query);
+        if (empty($query) || strlen($query) < 5) {
+            continue; // Skip empty queries
         }
+        
+        // Show what we're executing
+        $query_preview = substr($query, 0, 80);
+        echo '<div class="info">Executing query ' . ($index + 1) . ': ' . htmlspecialchars($query_preview) . '...</div>';
         
         if ($conn->query($query)) {
             $success_count++;
-            echo '<div class="info">✓ Executed: ' . substr($query, 0, 50) . '...</div>';
+            echo '<div class="success">✓ Success: ' . htmlspecialchars($query_preview) . '...</div>';
         } else {
             $error_count++;
+            $error_msg = $conn->error;
             // Check if error is because table already exists
-            if (strpos($conn->error, 'already exists') !== false) {
-                echo '<div class="info">⚠ Skipped (already exists): ' . substr($query, 0, 50) . '...</div>';
+            if (strpos($error_msg, 'already exists') !== false || strpos($error_msg, 'Duplicate') !== false) {
+                echo '<div class="info">⚠ Skipped (already exists): ' . htmlspecialchars($query_preview) . '...</div>';
+                $success_count++; // Count as success since it's just a duplicate
             } else {
-                echo '<div class="error">✗ Error: ' . $conn->error . '</div>';
-                echo '<div class="error">Query: ' . htmlspecialchars(substr($query, 0, 200)) . '</div>';
+                echo '<div class="error">✗ Error: ' . htmlspecialchars($error_msg) . '</div>';
+                echo '<div class="error">Full Query: <pre>' . htmlspecialchars($query) . '</pre></div>';
             }
         }
     }

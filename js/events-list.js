@@ -72,7 +72,6 @@ function loadEventList() {
           <ol>
             <li>Make sure XAMPP Apache is running</li>
             <li>Access via: <code>http://localhost/Project Phase 1/index.html</code></li>
-            <li>Test PHP: <code>http://localhost/Project Phase 1/test_php.php</code></li>
             <li>Test API: <code>http://localhost/Project Phase 1/api/get_events.php</code></li>
           </ol>
         </div>

@@ -168,8 +168,8 @@ Thumbs.db
    - Try adding an event
    - Check if it saves to database
 
-3. Test connection:
-   - `https://your-app.railway.app/test_connection.php`
+3. Test API endpoint:
+   - `https://your-app.railway.app/api/get_events.php` (should return JSON)
 
 ## Quick Comparison
 

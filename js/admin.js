@@ -1,6 +1,3 @@
-// Admin page functionality
-// Note: This runs after admin.html is loaded into the DOM, so DOMContentLoaded is not needed
-
 function initAdminPage() {
   console.log('Initializing admin page...');
   
@@ -19,14 +16,12 @@ function initAdminPage() {
   
   console.log('Form found, attaching event listener...');
   
-  // Load existing events
   loadAdminEvents();
   
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     console.log('Form submitted!');
     
-    // Clear previous messages
     messageDiv.innerHTML = '<div class="info-message">Adding event...</div>';
     
     const formData = {
@@ -38,7 +33,6 @@ function initAdminPage() {
     
     console.log('Form data:', formData);
     
-    // Validate required fields
     if (!formData.title || !formData.date || !formData.description) {
       messageDiv.innerHTML = '<div class="error-message">Please fill in all required fields (Title, Date, Description)</div>';
       return;
@@ -55,17 +49,13 @@ function initAdminPage() {
     })
     .then(res => {
       console.log('Response received, status:', res.status);
-      // Check if response is actually PHP code (not JSON)
       return res.text().then(text => {
         console.log('Response text (first 200 chars):', text.substring(0, 200));
-        if (text.trim().startsWith('<?php') || text.trim().startsWith('<!DOCTYPE')) {
-          throw new Error('PHP is not executing. Server returned PHP code instead of JSON. Make sure you are accessing via http://localhost, not file:// or live-server.');
-        }
         try {
           return JSON.parse(text);
         } catch (e) {
           console.error('JSON parse error. Response was:', text);
-          throw new Error('Invalid JSON response. PHP may not be executing. Response: ' + text.substring(0, 200));
+          throw new Error('Invalid JSON response. Server may not be running. Response: ' + text.substring(0, 200));
         }
       });
     })
@@ -98,9 +88,6 @@ function loadAdminEvents() {
   fetch('api/get_events.php')
     .then(res => {
       return res.text().then(text => {
-        if (text.trim().startsWith('<?php')) {
-          throw new Error('PHP is not executing');
-        }
         return JSON.parse(text);
       });
     })
@@ -135,7 +122,6 @@ function loadAdminEvents() {
     });
 }
 
-// Initialize when script loads (elements should already be in DOM)
 setTimeout(initAdminPage, 100);
 
 

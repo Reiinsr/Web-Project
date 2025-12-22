@@ -2,17 +2,15 @@ function loadEventList() {
   const container = document.getElementById('event-list');
   if (!container) return;
 
-  // Check if accessing via file:// protocol (won't work with PHP)
   if (window.location.protocol === 'file:') {
     container.innerHTML = `
       <div class="error-message" style="padding: 20px; background: #f8d7da; color: #721c24; border-radius: 5px; margin: 20px 0;">
-        <h3>⚠️ PHP Not Available</h3>
-        <p>You're accessing this page via <code>file://</code> protocol, which cannot execute PHP.</p>
-        <p><strong>Solution:</strong> Access via XAMPP web server:</p>
+        <h3>⚠️ Server Not Available</h3>
+        <p>You're accessing this page via <code>file://</code> protocol, which cannot connect to the API server.</p>
+        <p><strong>Solution:</strong> Access via web server:</p>
         <ul>
-          <li>Make sure XAMPP Apache is running</li>
-          <li>Open: <code>http://localhost/Project Phase 1/index.html</code></li>
-          <li>Or use: <code>http://localhost/Project%20Phase%201/index.html</code> (with URL encoding)</li>
+          <li>Make sure the Node.js server is running</li>
+          <li>Open: <code>http://localhost:3000</code></li>
         </ul>
       </div>
     `;
@@ -21,16 +19,12 @@ function loadEventList() {
 
   fetch('api/get_events.php')
     .then(res => {
-      // Check if response is actually PHP code (not JSON)
       return res.text().then(text => {
-        if (text.trim().startsWith('<?php') || text.trim().startsWith('<!DOCTYPE')) {
-          throw new Error('PHP is not executing. Server returned PHP code instead of JSON. Make sure you are accessing via http://localhost, not file:// or live-server.');
-        }
         try {
           return JSON.parse(text);
         } catch (e) {
           console.error('Response was:', text.substring(0, 200));
-          throw new Error('Invalid JSON response. PHP may not be executing. Response: ' + text.substring(0, 100));
+          throw new Error('Invalid JSON response. Server may not be running. Response: ' + text.substring(0, 100));
         }
       });
     })
@@ -70,9 +64,9 @@ function loadEventList() {
           <p><strong>Current URL:</strong> ${window.location.href}</p>
           <p><strong>Solution:</strong></p>
           <ol>
-            <li>Make sure XAMPP Apache is running</li>
-            <li>Access via: <code>http://localhost/Project Phase 1/index.html</code></li>
-            <li>Test API: <code>http://localhost/Project Phase 1/api/get_events.php</code></li>
+            <li>Make sure the Node.js server is running</li>
+            <li>Access via: <code>http://localhost:3000</code></li>
+            <li>Test API: <code>http://localhost:3000/api/get_events.php</code></li>
           </ol>
         </div>
       `;

@@ -1,10 +1,11 @@
 const mysql = require('mysql2/promise');
 
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASS || '',
-  database: process.env.DB_NAME || 'event_management',
+  host: process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+  user: process.env.MYSQL_USER || process.env.MYSQLUSER || process.env.DB_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || process.env.MYSQLPASSWORD || process.env.DB_PASS || '',
+  database: process.env.MYSQL_DATABASE || process.env.MYSQLDATABASE || process.env.DB_NAME || 'event_management',
+  port: process.env.MYSQL_PORT || process.env.MYSQLPORT || process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -14,19 +15,48 @@ let pool = null;
 
 async function initialize() {
   try {
-    const connection = await mysql.createConnection({
+    console.log('Connecting to database:', {
       host: dbConfig.host,
-      user: dbConfig.user,
-      password: dbConfig.password
+      port: dbConfig.port,
+      database: dbConfig.database,
+      user: dbConfig.user
     });
 
-    await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbConfig.database}`);
-    await connection.end();
+    if (process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.RAILWAY_ENVIRONMENT) {
+      pool = mysql.createPool({
+        host: dbConfig.host,
+        port: dbConfig.port,
+        user: dbConfig.user,
+        password: dbConfig.password,
+        database: dbConfig.database,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        charset: 'utf8mb4'
+      });
+    } else {
+      const connection = await mysql.createConnection({
+        host: dbConfig.host,
+        port: dbConfig.port,
+        user: dbConfig.user,
+        password: dbConfig.password
+      });
 
-    pool = mysql.createPool({
-      ...dbConfig,
-      charset: 'utf8mb4'
-    });
+      await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbConfig.database}`);
+      await connection.end();
+
+      pool = mysql.createPool({
+        host: dbConfig.host,
+        port: dbConfig.port,
+        user: dbConfig.user,
+        password: dbConfig.password,
+        database: dbConfig.database,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        charset: 'utf8mb4'
+      });
+    }
 
     await ensureTableExists();
     console.log('Database initialized successfully');

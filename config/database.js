@@ -31,7 +31,6 @@ async function initialize() {
   });
 
   await ensureTableExists();
-  console.log('Database initialized successfully');
   return pool;
 }
 
@@ -50,7 +49,6 @@ async function ensureTableExists() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `);
-    console.log('Events table created');
   }
   connection.release();
 }

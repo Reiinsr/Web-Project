@@ -65,7 +65,7 @@ async function ensureTableExists() {
   } else {
     const [columns] = await connection.query("SHOW COLUMNS FROM messages WHERE Field = 'id'");
     if (columns.length > 0 && !columns[0].Extra.includes('auto_increment')) {
-      await connection.query("ALTER TABLE messages MODIFY id INT AUTO_INCREMENT PRIMARY KEY");
+      await connection.query("ALTER TABLE messages MODIFY id INT AUTO_INCREMENT");
     }
   }
   

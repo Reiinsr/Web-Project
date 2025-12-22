@@ -46,6 +46,12 @@ function loadPageContent(page, eventId) {
           script.src = 'js/admin.js';
           document.body.appendChild(script);
         }
+        
+        if (page === 'contact') {
+          const script = document.createElement('script');
+          script.src = 'js/contact.js';
+          document.body.appendChild(script);
+        }
       }, 50);
     });
 }

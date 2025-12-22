@@ -1,7 +1,4 @@
-function loadEventFromHash() {
-  const hash = location.hash;
-  const params = new URLSearchParams(hash.split('?')[1]);
-  const eventId = params.get('id');
+function loadEvent(eventId) {
   const container = document.getElementById('event-details');
   if (!eventId || !container) return;
 
@@ -25,10 +22,8 @@ function loadEventFromHash() {
           <div class="event-description-full">
             <p>${event.description}</p>
           </div>
-          <a href="#home" data-page="home" class="btn-back">← Back to Events</a>
+          <a href="#" onclick="loadPageContent('home'); return false;" class="btn-back">← Back to Events</a>
         </div>
       `;
     });
 }
-
-setTimeout(loadEventFromHash, 10);

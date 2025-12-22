@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   loadComponent('components/header.html', '#header');
   loadComponent('components/footer.html', '#footer');
-  router();
-  window.addEventListener('popstate', router);
-  window.addEventListener('hashchange', router);
+  loadPageContent('home');
 });
 
 function loadComponent(url, selector) {
@@ -15,7 +13,7 @@ function loadComponent(url, selector) {
     });
 }
 
-function loadPageContent(page) {
+function loadPageContent(page, eventId) {
   fetch(`pages/${page}.html`)
     .then(res => res.text())
     .then(html => {
@@ -26,6 +24,9 @@ function loadPageContent(page) {
           const script = document.createElement('script');
           script.src = 'js/events.js';
           document.body.appendChild(script);
+          if (eventId) {
+            setTimeout(() => loadEvent(eventId), 100);
+          }
         }
 
         if (page === 'home') {
@@ -48,14 +49,7 @@ function attachNavListeners() {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const page = e.target.getAttribute('data-page');
-      history.pushState({}, '', `#${page}`);
-      router();
+      loadPageContent(page);
     });
   });
-}
-
-function router() {
-  const hash = location.hash;
-  const page = hash.split('?')[0].replace('#', '') || 'home';
-  loadPageContent(page);
 }

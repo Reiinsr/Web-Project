@@ -26,7 +26,7 @@ function loadEventList() {
             </div>
             ${event.location ? `<p class="event-location"><i class="location-icon">📍</i> ${event.location}</p>` : ''}
             <p class="event-description">${event.description}</p>
-            <a href="#event?id=${event.id}" data-page="event" class="btn-view-details">View Details</a>
+            <a href="#" onclick="loadPageContent('event', ${event.id}); return false;" class="btn-view-details">View Details</a>
           </div>
         `;
       }).join('');

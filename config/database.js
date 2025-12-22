@@ -14,80 +14,72 @@ const dbConfig = {
 let pool = null;
 
 async function initialize() {
-  try {
-    console.log('Connecting to database:', {
+  console.log('Connecting to database:', {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    database: dbConfig.database,
+    user: dbConfig.user
+  });
+
+  if (process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.RAILWAY_ENVIRONMENT) {
+    pool = mysql.createPool({
       host: dbConfig.host,
       port: dbConfig.port,
+      user: dbConfig.user,
+      password: dbConfig.password,
       database: dbConfig.database,
-      user: dbConfig.user
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+      charset: 'utf8mb4'
+    });
+  } else {
+    const connection = await mysql.createConnection({
+      host: dbConfig.host,
+      port: dbConfig.port,
+      user: dbConfig.user,
+      password: dbConfig.password
     });
 
-    if (process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.RAILWAY_ENVIRONMENT) {
-      pool = mysql.createPool({
-        host: dbConfig.host,
-        port: dbConfig.port,
-        user: dbConfig.user,
-        password: dbConfig.password,
-        database: dbConfig.database,
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0,
-        charset: 'utf8mb4'
-      });
-    } else {
-      const connection = await mysql.createConnection({
-        host: dbConfig.host,
-        port: dbConfig.port,
-        user: dbConfig.user,
-        password: dbConfig.password
-      });
+    await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbConfig.database}`);
+    await connection.end();
 
-      await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbConfig.database}`);
-      await connection.end();
-
-      pool = mysql.createPool({
-        host: dbConfig.host,
-        port: dbConfig.port,
-        user: dbConfig.user,
-        password: dbConfig.password,
-        database: dbConfig.database,
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0,
-        charset: 'utf8mb4'
-      });
-    }
-
-    await ensureTableExists();
-    console.log('Database initialized successfully');
-    return pool;
-  } catch (error) {
-    console.error('Database initialization error:', error);
-    throw error;
+    pool = mysql.createPool({
+      host: dbConfig.host,
+      port: dbConfig.port,
+      user: dbConfig.user,
+      password: dbConfig.password,
+      database: dbConfig.database,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+      charset: 'utf8mb4'
+    });
   }
+
+  await ensureTableExists();
+  console.log('Database initialized successfully');
+  return pool;
 }
 
 async function ensureTableExists() {
   const connection = await pool.getConnection();
-  try {
-    const [tables] = await connection.query("SHOW TABLES LIKE 'events'");
-    if (tables.length === 0) {
-      await connection.query(`
-        CREATE TABLE IF NOT EXISTS events (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          title VARCHAR(255) NOT NULL,
-          date DATE NOT NULL,
-          description TEXT NOT NULL,
-          location VARCHAR(255) DEFAULT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )
-      `);
-      console.log('Events table created');
-    }
-  } finally {
-    connection.release();
+  const [tables] = await connection.query("SHOW TABLES LIKE 'events'");
+  if (tables.length === 0) {
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS events (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        date DATE NOT NULL,
+        description TEXT NOT NULL,
+        location VARCHAR(255) DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('Events table created');
   }
+  connection.release();
 }
 
 function getConnection() {

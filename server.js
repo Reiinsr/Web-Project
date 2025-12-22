@@ -25,8 +25,5 @@ db.initialize().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
-}).catch((error) => {
-  console.error('Failed to initialize database:', error);
-  process.exit(1);
 });
 

@@ -1,11 +1,11 @@
 const mysql = require('mysql2/promise');
 
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASS || '',
-  database: process.env.DB_NAME || 'event_management',
-  port: process.env.DB_PORT || 3306
+  host: process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
+  user: process.env.MYSQL_USER || process.env.DB_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || process.env.DB_PASS || '',
+  database: process.env.MYSQL_DATABASE || process.env.DB_NAME || 'event_management',
+  port: process.env.MYSQL_PORT || process.env.DB_PORT || 3306
 };
 
 let pool = null;

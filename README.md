@@ -94,7 +94,7 @@ DB_PORT=3306
 PORT=3000
 ```
 
-**For Railway deployment:** Set these environment variables in your Railway project settings.
+**For Railway:** The app also supports `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE` variables that Railway provides automatically.
 
 ## API Endpoints
 

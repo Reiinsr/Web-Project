@@ -30,7 +30,7 @@ function initAdminPage() {
       },
       body: JSON.stringify(formData)
     })
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
       if (data.success) {
         messageDiv.innerHTML = '<div class="success-message">✓ Event added successfully! (ID: ' + (data.id || 'N/A') + ')</div>';
@@ -44,28 +44,27 @@ function initAdminPage() {
   });
 }
 
-function loadAdminEvents() {
-  fetch('api/events')
-    .then(res => res.json())
-    .then(events => {
-      const container = document.getElementById('admin-event-list');
-      if (!container) return;
-      
-      if (events.length === 0) {
-        container.innerHTML = '<p>No events found. Add your first event above!</p>';
-        return;
-      }
-      
-      container.innerHTML = events.map(event => `
-        <div class="admin-event-card">
-          <h3>${event.title}</h3>
-          <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
-          ${event.location ? `<p><strong>Location:</strong> ${event.location}</p>` : ''}
-          <p>${event.description}</p>
-          <small style="color: #666;">ID: ${event.id}</small>
-        </div>
-      `).join('');
-    });
+async function loadAdminEvents() {
+  const response = await fetch('api/events');
+  const events = await response.json();
+  
+  const container = document.getElementById('admin-event-list');
+  if (!container) return;
+  
+  if (events.length === 0) {
+    container.innerHTML = '<p>No events found. Add your first event above!</p>';
+    return;
+  }
+  
+  container.innerHTML = events.map(event => `
+    <div class="admin-event-card">
+      <h3>${event.title}</h3>
+      <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+      ${event.location ? `<p><strong>Location:</strong> ${event.location}</p>` : ''}
+      <p>${event.description}</p>
+      <small style="color: #666;">ID: ${event.id}</small>
+    </div>
+  `).join('');
 }
 
 setTimeout(initAdminPage, 100);

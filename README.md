@@ -106,9 +106,9 @@ The application supports multiple environment variable formats for compatibility
 
 ## API Endpoints
 
-- `GET /api/get_events.php` - Get all events
-- `GET /api/get_event.php?id={id}` - Get a single event by ID
-- `POST /api/add_event.php` - Add a new event
+- `GET /api/events` - Get all events
+- `GET /api/events/:id` - Get a single event by ID
+- `POST /api/events` - Add a new event
 
 ## Deployment
 

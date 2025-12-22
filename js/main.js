@@ -4,46 +4,58 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPageContent('home');
 });
 
-async function loadComponent(url, selector) {
-  const data = await (await fetch(url)).text();
-  document.querySelector(selector).innerHTML = data;
-  if (selector === '#header') attachNavListeners();
+function loadComponent(url, selector) {
+  fetch(url)
+    .then(function(response) {
+      return response.text();
+    })
+    .then(function(data) {
+      document.querySelector(selector).innerHTML = data;
+      if (selector === '#header') attachNavListeners();
+    });
 }
 
-async function loadPageContent(page, eventId) {
-  const html = await (await fetch(`pages/${page}.html`)).text();
-  document.querySelector('#content').innerHTML = html;
+function loadPageContent(page, eventId) {
+  fetch(`pages/${page}.html`)
+    .then(function(response) {
+      return response.text();
+    })
+    .then(function(html) {
+      document.querySelector('#content').innerHTML = html;
 
-  setTimeout(() => {
-    if (page === 'event') {
-      const script = document.createElement('script');
-      script.src = 'js/events.js';
-      document.body.appendChild(script);
-      if (eventId) {
-        setTimeout(() => loadEvent(eventId), 100);
-      }
-    }
+      setTimeout(function() {
+        if (page === 'event') {
+          const script = document.createElement('script');
+          script.src = 'js/events.js';
+          document.body.appendChild(script);
+          if (eventId) {
+            setTimeout(function() {
+              loadEvent(eventId);
+            }, 100);
+          }
+        }
 
-    if (page === 'home') {
-      const script = document.createElement('script');
-      script.src = 'js/events-list.js';
-      document.body.appendChild(script);
-    }
-    
-    if (page === 'admin') {
-      const script = document.createElement('script');
-      script.src = 'js/admin.js';
-      document.body.appendChild(script);
-    }
-  }, 50);
+        if (page === 'home') {
+          const script = document.createElement('script');
+          script.src = 'js/events-list.js';
+          document.body.appendChild(script);
+        }
+        
+        if (page === 'admin') {
+          const script = document.createElement('script');
+          script.src = 'js/admin.js';
+          document.body.appendChild(script);
+        }
+      }, 50);
+    });
 }
 
 function attachNavListeners() {
-  document.querySelectorAll('nav a').forEach(link => {
-    link.onclick = function() {
+  document.querySelectorAll('nav a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
       const page = this.getAttribute('data-page');
       loadPageContent(page);
-      return false;
-    };
+    });
   });
 }

@@ -4,7 +4,7 @@ const dbConfig = {
   host: process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
   user: process.env.MYSQL_USER || process.env.DB_USER || 'root',
   password: process.env.MYSQL_PASSWORD || process.env.DB_PASS || '',
-  database: process.env.MYSQL_DATABASE || process.env.DB_NAME || 'contactMessages',
+  database: process.env.MYSQL_DATABASE || process.env.MYSQLDATABASE || process.env.DB_NAME || 'contactMessages',
   port: process.env.MYSQL_PORT || process.env.DB_PORT || 3306
 };
 

@@ -7,7 +7,7 @@ function initAdminPage() {
   
   loadAdminEvents();
   
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     messageDiv.innerHTML = '<div class="info-message">Adding event...</div>';
@@ -23,24 +23,24 @@ function initAdminPage() {
       return;
     }
     
-    fetch('api/events', {
+    const response = await fetch('api/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        messageDiv.innerHTML = '<div class="success-message">✓ Event added successfully! (ID: ' + (data.id || 'N/A') + ')</div>';
-        form.reset();
-        loadAdminEvents();
-        setTimeout(() => {
-          messageDiv.innerHTML = '';
-        }, 5000);
-      }
     });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      messageDiv.innerHTML = '<div class="success-message">✓ Event added successfully! (ID: ' + (data.id || 'N/A') + ')</div>';
+      form.reset();
+      loadAdminEvents();
+      setTimeout(() => {
+        messageDiv.innerHTML = '';
+      }, 5000);
+    }
   });
 }
 

@@ -19,7 +19,7 @@ app.use('/api', messagesRoutes);
 
 app.get('/init-db', function(req, res) {
   const password = req.query.password;
-  if (password !== 'yourpassword123') {
+  if (password !== 'danny123') {
     return res.status(401).send('Unauthorized');
   }
   

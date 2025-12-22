@@ -40,10 +40,10 @@ async function loadPageContent(page, eventId) {
 
 function attachNavListeners() {
   document.querySelectorAll('nav a').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const page = e.target.getAttribute('data-page');
+    link.onclick = function() {
+      const page = this.getAttribute('data-page');
       loadPageContent(page);
-    });
+      return false;
+    };
   });
 }

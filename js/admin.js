@@ -4,9 +4,7 @@ function initAdminPage() {
   
   loadAdminEvents();
   
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
+  form.onsubmit = async function() {
     messageDiv.innerHTML = '<div class="info-message">Adding event...</div>';
     
     const formData = {
@@ -17,7 +15,7 @@ function initAdminPage() {
     };
     
     if (!formData.title || !formData.date || !formData.description) {
-      return;
+      return false;
     }
     
     const data = await (await fetch('api/events', {
@@ -36,7 +34,9 @@ function initAdminPage() {
         messageDiv.innerHTML = '';
       }, 5000);
     }
-  });
+    
+    return false;
+  };
 }
 
 async function loadAdminEvents() {

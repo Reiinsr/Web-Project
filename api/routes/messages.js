@@ -10,7 +10,7 @@ router.get('/messages', async (req, res) => {
   res.json(rows);
 });
 
-router.post('/messages', async (req, res) => {
+router.post('/messages', function(req, res) {
   const name = req.body.name;
   const email = req.body.email;
   const message = req.body.message;
@@ -28,15 +28,15 @@ router.post('/messages', async (req, res) => {
   }
 
   const pool = db.getConnection();
-  const [result] = await pool.execute(
+  pool.execute(
     'INSERT INTO messages (name, email, message) VALUES (?, ?, ?)',
     [name.trim(), email.trim(), message.trim()]
-  );
-
-  res.json({
-    success: true,
-    message: 'Message sent successfully',
-    id: result.insertId
+  ).then(function(result) {
+    res.json({
+      success: true,
+      message: 'Message sent successfully',
+      id: result[0].insertId
+    });
   });
 });
 

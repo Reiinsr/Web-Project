@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/database');
 
+router.get('/messages', async (req, res) => {
+  const pool = db.getConnection();
+  const [rows] = await pool.execute(
+    'SELECT id, name, email, message FROM messages ORDER BY id DESC'
+  );
+  res.json(rows);
+});
+
 router.post('/messages', async (req, res) => {
   const { name, email, message } = req.body;
 

@@ -3,6 +3,7 @@ function initAdminPage() {
   const messageDiv = document.getElementById('form-message');
   
   loadAdminEvents();
+  loadAdminMessages();
   
   form.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -131,6 +132,32 @@ function deleteEvent(eventId) {
       if (data.success) {
         loadAdminEvents();
       }
+    });
+}
+
+function loadAdminMessages() {
+  fetch('api/messages')
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(messages) {
+      const container = document.getElementById('admin-messages-list');
+      
+      if (messages.length === 0) {
+        container.innerHTML = '<p>No messages yet.</p>';
+        return;
+      }
+      
+      container.innerHTML = messages.map(function(msg) {
+        return `
+          <div class="admin-event-card" style="margin-bottom: 20px;">
+            <p><strong>Name:</strong> ${msg.name}</p>
+            <p><strong>Email:</strong> ${msg.email}</p>
+            <p><strong>Message:</strong> ${msg.message}</p>
+            <small style="color: #666;">ID: ${msg.id}</small>
+          </div>
+        `;
+      }).join('');
     });
 }
 

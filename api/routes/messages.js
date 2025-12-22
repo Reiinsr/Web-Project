@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/database');
 
-router.get('/', async (req, res) => {
+router.get('/messages', async (req, res) => {
   const pool = db.getConnection();
   const [rows] = await pool.execute(
     'SELECT id, name, email, message FROM messages ORDER BY id DESC'
@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
   res.json(rows);
 });
 
-router.post('/', async (req, res) => {
+router.post('/messages', async (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !name.trim()) {

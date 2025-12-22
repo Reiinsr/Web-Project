@@ -38,9 +38,9 @@ function initAdminPage() {
       return;
     }
     
-    console.log('Sending fetch request to api/add_event.php...');
+    console.log('Sending fetch request to api/events...');
     
-    fetch('api/add_event.php', {
+    fetch('api/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ function initAdminPage() {
 }
 
 function loadAdminEvents() {
-  fetch('api/get_events.php')
+  fetch('api/events')
     .then(res => {
       return res.text().then(text => {
         return JSON.parse(text);

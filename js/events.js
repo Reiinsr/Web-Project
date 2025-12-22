@@ -5,7 +5,7 @@ function loadEventFromHash() {
   const container = document.getElementById('event-details');
   if (!eventId || !container) return;
 
-  fetch(`api/get_event.php?id=${eventId}`)
+  fetch(`api/events/${eventId}`)
     .then(res => res.json())
     .then(event => {
       if (event.error) {

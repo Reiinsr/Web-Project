@@ -17,7 +17,7 @@ function loadEventList() {
     return;
   }
 
-  fetch('api/get_events.php')
+  fetch('api/events')
     .then(res => {
       return res.text().then(text => {
         try {
@@ -66,7 +66,7 @@ function loadEventList() {
           <ol>
             <li>Make sure the Node.js server is running</li>
             <li>Access via: <code>http://localhost:3000</code></li>
-            <li>Test API: <code>http://localhost:3000/api/get_events.php</code></li>
+            <li>Test API: <code>http://localhost:3000/api/events</code></li>
           </ol>
         </div>
       `;

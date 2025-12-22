@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/database');
 
-router.get('/get_events.php', async (req, res) => {
+router.get('/events', async (req, res) => {
   const pool = db.getConnection();
   const [rows] = await pool.execute(
     'SELECT id, title, date, description, location FROM events ORDER BY date ASC'
@@ -10,8 +10,8 @@ router.get('/get_events.php', async (req, res) => {
   res.json(rows);
 });
 
-router.get('/get_event.php', async (req, res) => {
-  const eventId = parseInt(req.query.id);
+router.get('/events/:id', async (req, res) => {
+  const eventId = parseInt(req.params.id);
   
   if (!eventId || eventId <= 0) {
     return res.status(400).json({ error: 'Invalid event ID' });
@@ -30,7 +30,7 @@ router.get('/get_event.php', async (req, res) => {
   res.json(rows[0]);
 });
 
-router.post('/add_event.php', async (req, res) => {
+router.post('/events', async (req, res) => {
   const pool = db.getConnection();
   
   const [tables] = await pool.execute("SHOW TABLES LIKE 'events'");

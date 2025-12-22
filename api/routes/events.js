@@ -58,5 +58,53 @@ router.post('/events', async (req, res) => {
   });
 });
 
+router.put('/events/:id', async (req, res) => {
+  const eventId = parseInt(req.params.id);
+  const { title, date, description, location } = req.body;
+
+  if (!eventId || eventId <= 0) {
+    return res.status(400).json({ error: 'Invalid event ID' });
+  }
+
+  if (!title || !title.trim()) {
+    return res.status(400).json({ error: 'Missing required field: title' });
+  }
+
+  if (!date || !date.trim()) {
+    return res.status(400).json({ error: 'Missing required field: date' });
+  }
+
+  if (!description || !description.trim()) {
+    return res.status(400).json({ error: 'Missing required field: description' });
+  }
+
+  const pool = db.getConnection();
+  await pool.execute(
+    'UPDATE events SET title = ?, date = ?, description = ?, location = ? WHERE id = ?',
+    [title.trim(), date.trim(), description.trim(), location ? location.trim() : '', eventId]
+  );
+
+  res.json({
+    success: true,
+    message: 'Event updated successfully'
+  });
+});
+
+router.delete('/events/:id', async (req, res) => {
+  const eventId = parseInt(req.params.id);
+
+  if (!eventId || eventId <= 0) {
+    return res.status(400).json({ error: 'Invalid event ID' });
+  }
+
+  const pool = db.getConnection();
+  await pool.execute('DELETE FROM events WHERE id = ?', [eventId]);
+
+  res.json({
+    success: true,
+    message: 'Event deleted successfully'
+  });
+});
+
 module.exports = router;
 

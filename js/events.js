@@ -2,8 +2,7 @@ async function loadEvent(eventId) {
   const container = document.getElementById('event-details');
   if (!eventId || !container) return;
 
-  const response = await fetch(`api/events/${eventId}`);
-  const event = await response.json();
+  const event = await (await fetch(`api/events/${eventId}`)).json();
   
   const eventDate = new Date(event.date);
   const formattedDate = eventDate.toLocaleDateString('en-US', { 

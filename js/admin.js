@@ -23,15 +23,13 @@ function initAdminPage() {
       return;
     }
     
-    const response = await fetch('api/events', {
+    const data = await (await fetch('api/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(formData)
-    });
-    
-    const data = await response.json();
+    })).json();
     
     if (data.success) {
       messageDiv.innerHTML = '<div class="success-message">✓ Event added successfully! (ID: ' + (data.id || 'N/A') + ')</div>';
@@ -45,8 +43,7 @@ function initAdminPage() {
 }
 
 async function loadAdminEvents() {
-  const response = await fetch('api/events');
-  const events = await response.json();
+  const events = await (await fetch('api/events')).json();
   
   const container = document.getElementById('admin-event-list');
   if (!container) return;

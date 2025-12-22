@@ -2,8 +2,7 @@ async function loadEventList() {
   const container = document.getElementById('event-list');
   if (!container) return;
 
-  const response = await fetch('api/events');
-  const events = await response.json();
+  const events = await (await fetch('api/events')).json();
   
   if (events.length === 0) {
     container.innerHTML = '<p class="no-events">No upcoming events at this time. Check back soon!</p>';

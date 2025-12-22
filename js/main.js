@@ -4,44 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPageContent('home');
 });
 
-function loadComponent(url, selector) {
-  fetch(url)
-    .then(res => res.text())
-    .then(data => {
-      document.querySelector(selector).innerHTML = data;
-      if (selector === '#header') attachNavListeners();
-    });
+async function loadComponent(url, selector) {
+  const data = await (await fetch(url)).text();
+  document.querySelector(selector).innerHTML = data;
+  if (selector === '#header') attachNavListeners();
 }
 
-function loadPageContent(page, eventId) {
-  fetch(`pages/${page}.html`)
-    .then(res => res.text())
-    .then(html => {
-      document.querySelector('#content').innerHTML = html;
+async function loadPageContent(page, eventId) {
+  const html = await (await fetch(`pages/${page}.html`)).text();
+  document.querySelector('#content').innerHTML = html;
 
-      setTimeout(() => {
-        if (page === 'event') {
-          const script = document.createElement('script');
-          script.src = 'js/events.js';
-          document.body.appendChild(script);
-          if (eventId) {
-            setTimeout(() => loadEvent(eventId), 100);
-          }
-        }
+  setTimeout(() => {
+    if (page === 'event') {
+      const script = document.createElement('script');
+      script.src = 'js/events.js';
+      document.body.appendChild(script);
+      if (eventId) {
+        setTimeout(() => loadEvent(eventId), 100);
+      }
+    }
 
-        if (page === 'home') {
-          const script = document.createElement('script');
-          script.src = 'js/events-list.js';
-          document.body.appendChild(script);
-        }
-        
-        if (page === 'admin') {
-          const script = document.createElement('script');
-          script.src = 'js/admin.js';
-          document.body.appendChild(script);
-        }
-      }, 50);
-    });
+    if (page === 'home') {
+      const script = document.createElement('script');
+      script.src = 'js/events-list.js';
+      document.body.appendChild(script);
+    }
+    
+    if (page === 'admin') {
+      const script = document.createElement('script');
+      script.src = 'js/admin.js';
+      document.body.appendChild(script);
+    }
+  }, 50);
 }
 
 function attachNavListeners() {

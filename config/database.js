@@ -1,11 +1,11 @@
 const mysql = require('mysql2/promise');
 
 const dbConfig = {
-  host: process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
-  user: process.env.MYSQL_USER || process.env.DB_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || process.env.DB_PASS || '',
-  database: process.env.MYSQL_DATABASE || process.env.MYSQLDATABASE || process.env.DB_NAME || 'railway',
-  port: process.env.MYSQL_PORT || process.env.DB_PORT || 3306
+  host: process.env.MYSQLHOST || process.env.MYSQL_HOST || process.env.DB_HOST || 'localhost',
+  user: process.env.MYSQLUSER || process.env.MYSQL_USER || process.env.DB_USER || 'root',
+  password: process.env.MYSQLPASSWORD || process.env.MYSQL_PASSWORD || process.env.DB_PASS || '',
+  database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || process.env.DB_NAME || 'railway',
+  port: process.env.MYSQLPORT || process.env.MYSQL_PORT || process.env.DB_PORT || 3306
 };
 
 let pool = null;

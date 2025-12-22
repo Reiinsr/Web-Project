@@ -5,7 +5,6 @@ require_once __DIR__ . '/../config.php';
 try {
     $conn = getDBConnection();
     
-    // Get all events ordered by date
     $sql = "SELECT id, title, date, description, location FROM events ORDER BY date ASC";
     $result = $conn->query($sql);
     

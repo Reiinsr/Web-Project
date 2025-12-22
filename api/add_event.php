@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $conn = getDBConnection();
         
-        // Check if events table exists
         $table_check = $conn->query("SHOW TABLES LIKE 'events'");
         if ($table_check->num_rows == 0) {
             http_response_code(500);
@@ -22,11 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         
-        // Get JSON input
         $raw_input = file_get_contents('php://input');
         $data = json_decode($raw_input, true);
         
-        // Check if JSON decode failed
         if (json_last_error() !== JSON_ERROR_NONE) {
             http_response_code(400);
             echo json_encode(array(
@@ -38,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         
-        // Validate input
         if (!isset($data['title']) || empty(trim($data['title']))) {
             http_response_code(400);
             echo json_encode(array('error' => 'Missing required field: title'));
@@ -65,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description = trim($data['description']);
         $location = isset($data['location']) ? trim($data['location']) : '';
         
-        // Insert event using prepared statement
         $stmt = $conn->prepare("INSERT INTO events (title, date, description, location) VALUES (?, ?, ?, ?)");
         
         if ($stmt) {

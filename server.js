@@ -17,6 +17,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', eventsRoutes);
 app.use('/api', messagesRoutes);
 
+app.get('/init-db', function(req, res) {
+  const password = req.query.password;
+  if (password !== 'yourpassword123') {
+    return res.status(401).send('Unauthorized');
+  }
+  
+  db.initialize().then(function() {
+    res.send('Database initialized successfully!');
+  });
+});
+
 app.use(express.static(path.join(__dirname)));
 
 app.get('*', (req, res) => {

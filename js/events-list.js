@@ -1,7 +1,5 @@
 async function loadEventList() {
   const container = document.getElementById('event-list');
-  if (!container) return;
-
   const events = await (await fetch('api/events')).json();
   
   if (events.length === 0) {

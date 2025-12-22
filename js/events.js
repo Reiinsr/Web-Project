@@ -1,7 +1,5 @@
 async function loadEvent(eventId) {
   const container = document.getElementById('event-details');
-  if (!eventId || !container) return;
-
   const event = await (await fetch(`api/events/${eventId}`)).json();
   
   const eventDate = new Date(event.date);

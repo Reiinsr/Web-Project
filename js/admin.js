@@ -1,26 +1,14 @@
 function initAdminPage() {
-  console.log('Initializing admin page...');
-  
   const form = document.getElementById('event-form');
   const messageDiv = document.getElementById('form-message');
   
-  if (!form) {
-    console.error('Event form not found!');
-    return;
-  }
-  
-  if (!messageDiv) {
-    console.error('Message div not found!');
-    return;
-  }
-  
-  console.log('Form found, attaching event listener...');
+  if (!form) return;
+  if (!messageDiv) return;
   
   loadAdminEvents();
   
   form.addEventListener('submit', function(e) {
     e.preventDefault();
-    console.log('Form submitted!');
     
     messageDiv.innerHTML = '<div class="info-message">Adding event...</div>';
     
@@ -30,8 +18,6 @@ function initAdminPage() {
       location: document.getElementById('location').value.trim(),
       description: document.getElementById('description').value.trim()
     };
-    
-    console.log('Form data:', formData);
     
     if (!formData.title || !formData.date || !formData.description) {
       return;
@@ -56,8 +42,6 @@ function initAdminPage() {
       }
     });
   });
-  
-  console.log('Admin page initialized successfully');
 }
 
 function loadAdminEvents() {

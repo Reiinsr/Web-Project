@@ -83,26 +83,18 @@ http://localhost:3000
 
 ## Environment Variables
 
-The application supports multiple environment variable formats for compatibility:
+Create a `.env` file in the root directory:
 
-**Railway MySQL (automatically detected):**
-- `MYSQL_HOST` or `MYSQLHOST`: MySQL host
-- `MYSQL_USER` or `MYSQLUSER`: MySQL username
-- `MYSQL_PASSWORD` or `MYSQLPASSWORD`: MySQL password
-- `MYSQL_DATABASE` or `MYSQLDATABASE`: Database name
-- `MYSQL_PORT` or `MYSQLPORT`: MySQL port (default: 3306)
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=
+DB_NAME=event_management
+DB_PORT=3306
+PORT=3000
+```
 
-**Standard format (fallback):**
-- `DB_HOST`: MySQL host (default: localhost)
-- `DB_USER`: MySQL username (default: root)
-- `DB_PASS`: MySQL password (default: empty)
-- `DB_NAME`: Database name (default: event_management)
-- `DB_PORT`: MySQL port (default: 3306)
-
-**Server:**
-- `PORT`: Server port (default: 3000)
-
-**Note:** Railway automatically provides MySQL environment variables when you add a MySQL service. The app will detect and use them automatically!
+**For Railway deployment:** Set these environment variables in your Railway project settings.
 
 ## API Endpoints
 

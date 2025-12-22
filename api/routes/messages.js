@@ -11,7 +11,9 @@ router.get('/messages', async (req, res) => {
 });
 
 router.post('/messages', async (req, res) => {
-  const { name, email, message } = req.body;
+  const name = req.body.name;
+  const email = req.body.email;
+  const message = req.body.message;
 
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Missing required field: name' });

@@ -19,10 +19,10 @@ function initAdminPage() {
       return;
     }
     
-    if (editingEventId) {
+    if (window.editingEventId) {
       messageDiv.innerHTML = '<div class="info-message">Updating event...</div>';
       
-      fetch(`api/events/${editingEventId}`, {
+      fetch(`api/events/${window.editingEventId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -36,7 +36,7 @@ function initAdminPage() {
         if (data.success) {
           messageDiv.innerHTML = '<div class="success-message">✓ Event updated successfully!</div>';
           form.reset();
-          editingEventId = null;
+          window.editingEventId = null;
           loadAdminEvents();
           setTimeout(function() {
             messageDiv.innerHTML = '';
@@ -101,7 +101,9 @@ function loadAdminEvents() {
     });
 }
 
-let editingEventId = null;
+if (typeof window.editingEventId === 'undefined') {
+  window.editingEventId = null;
+}
 
 function editEvent(eventId) {
   fetch(`api/events/${eventId}`)
@@ -113,7 +115,7 @@ function editEvent(eventId) {
       document.getElementById('date').value = event.date;
       document.getElementById('location').value = event.location || '';
       document.getElementById('description').value = event.description;
-      editingEventId = eventId;
+      window.editingEventId = eventId;
     });
 }
 

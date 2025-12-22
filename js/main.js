@@ -42,9 +42,16 @@ function loadPageContent(page, eventId) {
         }
         
         if (page === 'admin') {
-          const script = document.createElement('script');
-          script.src = 'js/admin.js';
-          document.body.appendChild(script);
+          const existingScript = document.querySelector('script[src="js/admin.js"]');
+          if (!existingScript) {
+            const script = document.createElement('script');
+            script.src = 'js/admin.js';
+            document.body.appendChild(script);
+          } else {
+            if (typeof initAdminPage === 'function') {
+              initAdminPage();
+            }
+          }
         }
         
         if (page === 'contact') {

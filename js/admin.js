@@ -34,11 +34,8 @@ function initAdminPage() {
     console.log('Form data:', formData);
     
     if (!formData.title || !formData.date || !formData.description) {
-      messageDiv.innerHTML = '<div class="error-message">Please fill in all required fields (Title, Date, Description)</div>';
       return;
     }
-    
-    console.log('Sending fetch request to api/events...');
     
     fetch('api/events', {
       method: 'POST',
@@ -47,20 +44,8 @@ function initAdminPage() {
       },
       body: JSON.stringify(formData)
     })
-    .then(res => {
-      console.log('Response received, status:', res.status);
-      return res.text().then(text => {
-        console.log('Response text (first 200 chars):', text.substring(0, 200));
-        try {
-          return JSON.parse(text);
-        } catch (e) {
-          console.error('JSON parse error. Response was:', text);
-          throw new Error('Invalid JSON response. Server may not be running. Response: ' + text.substring(0, 200));
-        }
-      });
-    })
+    .then(res => res.json())
     .then(data => {
-      console.log('Parsed response:', data);
       if (data.success) {
         messageDiv.innerHTML = '<div class="success-message">✓ Event added successfully! (ID: ' + (data.id || 'N/A') + ')</div>';
         form.reset();
@@ -68,16 +53,7 @@ function initAdminPage() {
         setTimeout(() => {
           messageDiv.innerHTML = '';
         }, 5000);
-      } else {
-        const errorMsg = data.error || data.message || 'Failed to add event';
-        messageDiv.innerHTML = '<div class="error-message">✗ Error: ' + errorMsg + '</div>';
-        console.error('API Error:', data);
       }
-    })
-    .catch(error => {
-      const errorMsg = 'Error: ' + error.message;
-      messageDiv.innerHTML = '<div class="error-message">✗ ' + errorMsg + '<br><small>Check browser console (F12) for details</small></div>';
-      console.error('Fetch Error:', error);
     });
   });
   
@@ -86,17 +62,10 @@ function initAdminPage() {
 
 function loadAdminEvents() {
   fetch('api/events')
-    .then(res => {
-      return res.text().then(text => {
-        return JSON.parse(text);
-      });
-    })
+    .then(res => res.json())
     .then(events => {
       const container = document.getElementById('admin-event-list');
-      if (!container) {
-        console.error('Admin event list container not found!');
-        return;
-      }
+      if (!container) return;
       
       if (events.length === 0) {
         container.innerHTML = '<p>No events found. Add your first event above!</p>';
@@ -112,13 +81,6 @@ function loadAdminEvents() {
           <small style="color: #666;">ID: ${event.id}</small>
         </div>
       `).join('');
-    })
-    .catch(error => {
-      const container = document.getElementById('admin-event-list');
-      if (container) {
-        container.innerHTML = '<div class="error-message">Error loading events: ' + error.message + '</div>';
-      }
-      console.error('Error loading events:', error);
     });
 }
 

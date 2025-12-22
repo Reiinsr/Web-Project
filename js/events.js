@@ -8,11 +8,6 @@ function loadEventFromHash() {
   fetch(`api/events/${eventId}`)
     .then(res => res.json())
     .then(event => {
-      if (event.error) {
-        container.innerHTML = '<div class="error-message"><p>Event not found.</p></div>';
-        return;
-      }
-      
       const eventDate = new Date(event.date);
       const formattedDate = eventDate.toLocaleDateString('en-US', { 
         year: 'numeric', 
@@ -33,10 +28,6 @@ function loadEventFromHash() {
           <a href="#home" data-page="home" class="btn-back">← Back to Events</a>
         </div>
       `;
-    })
-    .catch(error => {
-      console.error('Error loading event:', error);
-      container.innerHTML = '<div class="error-message"><p>Unable to load event details. Please try again later.</p></div>';
     });
 }
 

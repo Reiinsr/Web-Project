@@ -1,13 +1,25 @@
 const { loadEvent } = require('./events');
 
 function initAdminPage() {
-  const form = document.getElementById('event-form');
-  const messageDiv = document.getElementById('form-message');
-  
-  loadAdminEvents();
-  loadAdminMessages();
-  
-  form.addEventListener('submit', function(e) {
+  fetch('api/auth/me', {
+    credentials: 'include'
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(authData) {
+    if (!authData.success || !authData.user || !authData.user.isAdmin) {
+      document.querySelector('#content').innerHTML = '<main><div class="error-message">Access denied. Admin privileges required.</div></main>';
+      return;
+    }
+    
+    const form = document.getElementById('event-form');
+    const messageDiv = document.getElementById('form-message');
+    
+    loadAdminEvents();
+    loadAdminMessages();
+    
+    form.addEventListener('submit', function(e) {
     e.preventDefault();
     
     const formData = {
@@ -69,6 +81,7 @@ function initAdminPage() {
         }
       });
     }
+  });
   });
 }
 

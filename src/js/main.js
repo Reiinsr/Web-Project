@@ -2,6 +2,7 @@ const { loadEventList } = require('./events-list');
 const { loadEvent } = require('./events');
 const { initAdminPage } = require('./admin');
 const { initContactPage } = require('./contact');
+const { initLoginPage, initSignupPage, logout, checkAuth } = require('./auth');
 
 document.addEventListener('DOMContentLoaded', function() {
   loadComponent('components/header.html', '#header');
@@ -54,6 +55,18 @@ function loadPageContent(page, eventId) {
             initContactPage();
           }, 100);
         }
+        
+        if (page === 'login') {
+          setTimeout(function() {
+            initLoginPage();
+          }, 100);
+        }
+        
+        if (page === 'signup') {
+          setTimeout(function() {
+            initSignupPage();
+          }, 100);
+        }
       }, 50);
     });
 }
@@ -66,9 +79,57 @@ function attachNavListeners() {
       loadPageContent(page);
     });
   });
+  
+  checkAuth().then(function(authData) {
+    updateHeader(authData);
+  });
+}
+
+function updateHeader(authData) {
+  const nav = document.querySelector('nav');
+  if (!nav) return;
+  
+  const adminLink = nav.querySelector('a[data-page="admin"]');
+  const loginButton = document.getElementById('login-button');
+  const userInfo = document.getElementById('user-info');
+  
+  if (authData.success && authData.user) {
+    if (authData.user.isAdmin && adminLink) {
+      adminLink.style.display = '';
+    } else if (adminLink) {
+      adminLink.style.display = 'none';
+    }
+    
+    if (loginButton) {
+      loginButton.style.display = 'none';
+    }
+    
+    if (userInfo) {
+      userInfo.innerHTML = `
+        <span style="margin-right: 15px;">Welcome, ${authData.user.username}</span>
+        <button onclick="window.logout()" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">Logout</button>
+      `;
+      userInfo.style.display = 'flex';
+      userInfo.style.alignItems = 'center';
+      userInfo.style.gap = '10px';
+    }
+  } else {
+    if (adminLink) {
+      adminLink.style.display = 'none';
+    }
+    
+    if (loginButton) {
+      loginButton.style.display = '';
+    }
+    
+    if (userInfo) {
+      userInfo.style.display = 'none';
+    }
+  }
 }
 
 window.loadPageContent = loadPageContent;
+window.logout = logout;
 
-module.exports = { loadPageContent, loadComponent, attachNavListeners };
+module.exports = { loadPageContent, loadComponent, attachNavListeners, updateHeader };
 

@@ -69,6 +69,20 @@ async function ensureTableExists() {
     }
   }
   
+  const [usersTables] = await connection.query("SHOW TABLES LIKE 'users'");
+  if (usersTables.length === 0) {
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        is_admin TINYINT(1) DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  }
+  
   connection.release();
 }
 

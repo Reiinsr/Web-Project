@@ -22,15 +22,23 @@ function initAdminPage() {
     form.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const formData = {
-      title: document.getElementById('title').value.trim(),
-      date: document.getElementById('date').value,
-      location: document.getElementById('location').value.trim(),
-      description: document.getElementById('description').value.trim()
-    };
+    const title = document.getElementById('title').value.trim();
+    const date = document.getElementById('date').value;
+    const location = document.getElementById('location').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const imageFile = document.getElementById('image').files[0];
     
-    if (!formData.title || !formData.date || !formData.description) {
+    if (!title || !date || !description) {
       return;
+    }
+    
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('date', date);
+    formData.append('location', location);
+    formData.append('description', description);
+    if (imageFile) {
+      formData.append('image', imageFile);
     }
     
     if (window.editingEventId) {
@@ -38,10 +46,7 @@ function initAdminPage() {
       
       fetch(`api/events/${window.editingEventId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+        body: formData
       })
       .then(function(response) {
         return response.json();
@@ -62,10 +67,7 @@ function initAdminPage() {
       
       fetch('api/events', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+        body: formData
       })
       .then(function(response) {
         return response.json();
@@ -101,6 +103,7 @@ function loadAdminEvents() {
       container.innerHTML = events.map(function(event) {
         return `
           <div class="admin-event-card">
+            ${event.image ? `<img src="uploads/${event.image}" alt="${event.title}" style="max-width: 100%; height: auto; margin-bottom: 15px; border-radius: 8px;">` : ''}
             <h3>${event.title}</h3>
             <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
             ${event.location ? `<p><strong>Location:</strong> ${event.location}</p>` : ''}
@@ -130,6 +133,7 @@ function editEvent(eventId) {
       document.getElementById('date').value = event.date;
       document.getElementById('location').value = event.location || '';
       document.getElementById('description').value = event.description;
+      document.getElementById('image').value = '';
       window.editingEventId = eventId;
     });
 }

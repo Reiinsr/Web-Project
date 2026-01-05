@@ -21,6 +21,7 @@ function loadEventList() {
         
         return `
           <div class="event-card">
+            ${event.image ? `<img src="uploads/${event.image}" alt="${event.title}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px 8px 0 0; margin-bottom: 15px;">` : ''}
             <div class="event-card-header">
               <h3>${event.title}</h3>
               <span class="event-date-badge">${formattedDate}</span>

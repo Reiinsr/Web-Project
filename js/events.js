@@ -1,6 +1,6 @@
 function loadEvent(eventId) {
   const container = document.getElementById('event-details');
-  
+
   fetch(`api/events/${eventId}`)
     .then(function(response) {
       return response.json();

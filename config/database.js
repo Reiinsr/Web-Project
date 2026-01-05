@@ -45,10 +45,16 @@ async function ensureTableExists() {
         date DATE NOT NULL,
         description TEXT NOT NULL,
         location VARCHAR(255) DEFAULT NULL,
+        image VARCHAR(255) DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `);
+  } else {
+    const [columns] = await connection.query("SHOW COLUMNS FROM events WHERE Field = 'image'");
+    if (columns.length === 0) {
+      await connection.query("ALTER TABLE events ADD COLUMN image VARCHAR(255) DEFAULT NULL");
+    }
   }
   
   const [messagesTables] = await connection.query("SHOW TABLES LIKE 'messages'");

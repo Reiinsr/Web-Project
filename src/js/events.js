@@ -15,6 +15,7 @@ function loadEvent(eventId) {
       
       container.innerHTML = `
         <div class="event-detail-card">
+          ${event.image ? `<img src="uploads/${event.image}" alt="${event.title}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;">` : ''}
           <h2>${event.title}</h2>
           <div class="event-meta">
             <p class="event-date"><strong>Date:</strong> ${formattedDate}</p>

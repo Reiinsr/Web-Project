@@ -97,12 +97,13 @@ router.post('/logout', function(req, res) {
 
 router.get('/me', function(req, res) {
   if (req.session.userId) {
+    const isAdmin = req.session.isAdmin === true || req.session.isAdmin === 1 || req.session.isAdmin === '1';
     res.json({
       success: true,
       user: {
         id: req.session.userId,
         username: req.session.username,
-        isAdmin: req.session.isAdmin
+        isAdmin: isAdmin
       }
     });
   } else {

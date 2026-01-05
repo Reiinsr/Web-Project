@@ -17,7 +17,11 @@ function loadComponent(url, selector) {
     })
     .then(function(data) {
       document.querySelector(selector).innerHTML = data;
-      if (selector === '#header') attachNavListeners();
+      if (selector === '#header') {
+        setTimeout(function() {
+          attachNavListeners();
+        }, 50);
+      }
     });
 }
 
@@ -80,21 +84,30 @@ function attachNavListeners() {
     });
   });
   
-  checkAuth().then(function(authData) {
-    updateHeader(authData);
-  });
+  setTimeout(function() {
+    checkAuth().then(function(authData) {
+      updateHeader(authData);
+    });
+  }, 100);
 }
 
 function updateHeader(authData) {
   const nav = document.querySelector('nav');
-  if (!nav) return;
+  if (!nav) {
+    setTimeout(function() {
+      updateHeader(authData);
+    }, 100);
+    return;
+  }
   
   const adminLink = nav.querySelector('a[data-page="admin"]');
   const loginButton = document.getElementById('login-button');
   const userInfo = document.getElementById('user-info');
   
-  if (authData.success && authData.user) {
-    if (authData.user.isAdmin && adminLink) {
+  if (authData && authData.success && authData.user) {
+    const isAdmin = authData.user.isAdmin === true || authData.user.isAdmin === 1 || authData.user.isAdmin === '1';
+    
+    if (isAdmin && adminLink) {
       adminLink.style.display = '';
     } else if (adminLink) {
       adminLink.style.display = 'none';
